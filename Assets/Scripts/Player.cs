@@ -74,7 +74,7 @@ public class Player {
 		{
 			draw();
 		}
-		
+
 	}
 
 	public void discard(Card card)

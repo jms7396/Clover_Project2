@@ -39,6 +39,14 @@ public class Controller2 : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if (p1.Health <= 0)
+        {
+            p1.Health = 0;
+        }
+        if (p2.Health <= 0)
+        {
+            p2.Health = 0;
+        }
 	}
 
 	/// <summary>
