@@ -60,6 +60,11 @@ public class Player : MonoBehaviour
 		cardChoice = null;
 	}
 
+	public void Discard(Card card)
+	{
+		hand.Discard(card);
+	}
+
 	public bool drawTillFull()
 	{
 		for (int i = 0; i < Hand.HAND_SIZE; i++)

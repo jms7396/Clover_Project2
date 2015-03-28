@@ -51,8 +51,15 @@ public class Controller2 : MonoBehaviour, IPlayerCardEventHandler {
 			case State.PlayersLocked:
 				CardChecks(p1, p2, p1.CardChoice, p2.CardChoice);
 				state = State.PlayersChoosing;
-				p1.state = Player.State.Deciding;
-				p2.state = Player.State.Deciding;
+
+				p1.Discard(p1.CardChoice);
+				p2.Discard(p2.CardChoice);
+
+				p1.ResetChoice();
+				p2.ResetChoice();
+
+				p1.draw();
+				p2.draw();
 				break;
 			default:
 				break;

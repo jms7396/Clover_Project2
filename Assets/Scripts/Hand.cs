@@ -64,14 +64,39 @@ public class Hand : MonoBehaviour
 
 			uicard.Card = card;
 			uicard.owner = thisPlayer;
-			uicard.buttonText.text = keyList[Count].ToString();
 
 			cardGO.transform.SetParent(this.transform, false);
 			cardGO.SetActive(true);
 
+			setupButtonText();
+
 			return true;
 		}
 		return false;
+	}
+
+	public void setupButtonText()
+	{
+		int i = 0;
+		foreach (var uiCard in GetComponentsInChildren<UICard>())
+		{
+			uiCard.buttonText.text = keyList[i].ToString();
+			i++;
+		}
+	}
+		
+	public void Discard(Card card)
+	{
+		foreach (var uiCard in GetComponentsInChildren<UICard>())
+		{
+			if (uiCard.card == card)
+			{
+				uiCard.gameObject.SetActive(false);
+				Destroy(uiCard.gameObject);
+			}
+		}
+
+		setupButtonText();
 	}
 
 	void Start()
