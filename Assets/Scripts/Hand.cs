@@ -8,7 +8,7 @@ public class Hand : MonoBehaviour
 	/// <summary>
 	/// Keys listed in order to be associated with the hand of cards
 	/// </summary>
-	public KeyCode[] keyList;
+	public KeyCode[] keyList = new KeyCode[HAND_SIZE];
 
 	public GameObject playerCardEventHandler;
 
@@ -64,6 +64,7 @@ public class Hand : MonoBehaviour
 
 			uicard.Card = card;
 			uicard.owner = thisPlayer;
+			uicard.buttonText.text = keyList[Count].ToString();
 
 			cardGO.transform.SetParent(this.transform, false);
 			cardGO.SetActive(true);
