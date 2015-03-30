@@ -1,19 +1,50 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
+/// <summary>
+/// A way of bundling a card and a player together,
+/// and attaching a card to a gameobject without monobehavior for it.
+/// </summary>
 public class UICard : MonoBehaviour {
 
 	public Card card;
 
+	[HideInInspector]
 	public Player owner;
 
-	// Use this for initialization
-	void Start () {
+	public Text text;
+
+	public Text buttonText;
+
+	void Start () { }
 	
+	void Update () { }
+
+	public string Name
+	{
+		get
+		{
+			return text.text;
+		}
+		set
+		{
+			text.text = value;
+			this.name = value;
+		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+
+	public Card Card
+	{
+		set
+		{
+			card = value;
+			Name = card.cardName;
+		}
+	}
+
+	public static implicit operator Card(UICard self)
+	{
+		return self.card;
 	}
 }
