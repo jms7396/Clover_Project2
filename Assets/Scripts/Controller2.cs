@@ -9,6 +9,8 @@ using System;
 public class Controller2 : MonoBehaviour {
 	public Player p1;
 	public Player p2;
+	public GameObject GameOverPanel;
+	public GameObject GameOverText;
 
 	public BattleLogger log;
 
@@ -61,6 +63,20 @@ public class Controller2 : MonoBehaviour {
 		{
 			state = State.PlayersLocked;
 			EvaluateBattle();
+		}
+		if (p1.IsDead) 
+		{
+			Reset ();
+			Text ttext = GameOverText.GetComponent<Text>();
+			ttext.text = "Player 2 Wins!!";
+			GameOverPanel.SetActive(true);
+		}
+		if (p2.IsDead) 
+		{
+			Reset ();
+			Text ttext = GameOverText.GetComponent<Text>();
+			ttext.text = "Player 1 Wins!!";
+			GameOverPanel.SetActive(true);
 		}
 	}
 
@@ -173,5 +189,16 @@ public class Controller2 : MonoBehaviour {
 			}
 			break;
 		}
+	}
+
+	public void Reset()
+	{
+		p1.Health = 20;
+		p2.Health = 20;
+		p1.deck.Shuffle ();
+		p2.deck.Shuffle ();
+		//p1.State = PlayerState.None;
+		//p2.State = PlayerState.None;
+
 	}
 }

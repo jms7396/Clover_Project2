@@ -32,6 +32,7 @@ public class Deck {
 			cards[i] = cards[randomIndex];
 			cards[randomIndex] = temp;
 		}
+		cardsDrawn = 0;
 	}
 
 	public Card Draw()
