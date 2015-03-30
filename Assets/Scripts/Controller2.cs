@@ -5,61 +5,102 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using System;
 
+public enum GameState
+{
+	None,
+	Setup,
+	PlayersChoosing,
+	PlayersLocked
+};
+
+#region Events
+
+[System.Serializable]
+public class GameStateChanged : UnityEvent<Controller2, GameState, GameState> { }
+
+#endregion
 
 public class Controller2 : MonoBehaviour {
+
 	public Player p1;
 	public Player p2;
 
 	public BattleLogger log;
 
-	public enum State
+	private GameState state;
+	public GameState State
 	{
-		None,
-		PlayersChoosing,
-		PlayersLocked
-	};
+		get { return state; }
+		set
+		{
+			var old = state;
+			state = value;
+			onGameStateChange.Invoke(this, old, state);
+		}
+	}
 
-	public State state;
+	public GameStateChanged onGameStateChange;
 
 	void Awake()
 	{
-		p1.deck = new Deck();
-		p2.deck = new Deck();
-		p1.State = PlayerState.Setup;
-		p2.State = PlayerState.Setup;
 	}
 
 	void Start()
 	{
-		p1.drawTillFull();
-		p2.drawTillFull();
-		p1.State = PlayerState.Deciding;
-		p2.State = PlayerState.Deciding;
-		state = State.PlayersChoosing;
+		SetupGame();
 	}
 
 	void OnEnable()
 	{
-		Debug.Log("cont onen");
 		p1.stateChange.AddListener(OnPlayerStateChange);
 		p2.stateChange.AddListener(OnPlayerStateChange);
+		this.onGameStateChange.AddListener(OnGameStateChange);
 	}
 
 	void OnDisable()
 	{
 		p1.stateChange.RemoveListener(OnPlayerStateChange);
 		p2.stateChange.RemoveListener(OnPlayerStateChange);
+		this.onGameStateChange.RemoveListener(OnGameStateChange);
 	}
 
-	void Update()
+	void Update() { }
+
+	public void SetupAndStartGame()
 	{
+		StartGame();
+	}
+
+	public void SetupGame()
+	{
+		p1.deck = new Deck();
+		p2.deck = new Deck();
+		p1.State = PlayerState.Setup;
+		p2.State = PlayerState.Setup;
+		State = GameState.Setup;
+	}
+
+	public void StartGame()
+	{
+		p1.drawTillFull();
+		p2.drawTillFull();
+		p1.State = PlayerState.Deciding;
+		p2.State = PlayerState.Deciding;
+		State = GameState.PlayersChoosing;
+	}
+
+	public void OnGameStateChange(Controller2 controller, GameState oldState, GameState newState)
+	{
+		Utils.assert(() => this == controller);
+
+		Debug.Log("Controller: " + oldState + " -> " + newState);
 	}
 
 	public void OnPlayerStateChange(Player player, PlayerState oldState, PlayerState newState)
 	{
 		if (p1.HasChosen && p2.HasChosen)
 		{
-			state = State.PlayersLocked;
+			State = GameState.PlayersLocked;
 			EvaluateBattle();
 		}
 	}
@@ -67,7 +108,7 @@ public class Controller2 : MonoBehaviour {
 	public void EvaluateBattle()
 	{
 		CardChecks(p1, p2, p1.CardChoice, p2.CardChoice);
-		state = State.PlayersChoosing;
+		state = GameState.PlayersChoosing;
 
 		p1.Discard(p1.CardChoice);
 		p2.Discard(p2.CardChoice);
