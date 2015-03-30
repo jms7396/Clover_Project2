@@ -7,11 +7,13 @@ public class Deck {
 
 	public List<Card> cards = new List<Card>();
 	private static int numCards;
+	private int cardsDrawn;
 
 	// Use this for initialization
 	public Deck () 
 	{
 		numCards = 30;
+		cardsDrawn = 0;
 		GenerateDeck ();
 		Shuffle();
 	}
@@ -36,6 +38,12 @@ public class Deck {
 	{
 		Card drawnCard = cards[0];
 		cards.RemoveAt (0);
+		cardsDrawn++;
+		cards.Add(drawnCard);
+		if(cardsDrawn == 30)
+		{
+			Shuffle();
+		}
 		return drawnCard;
 	}
 
@@ -47,7 +55,7 @@ public class Deck {
 		for(int i = 0; i < numCards; i++)
 		{
 			string[] info = cardInfo[i].Split(',');
-			cards.Add(new Card(info[0], info[1], info[2], info[3], info[4], info[5], info[6], info[7]));
+			cards.Add(new Card(info[0], info[1], info[2]));
 		}
 	}
 

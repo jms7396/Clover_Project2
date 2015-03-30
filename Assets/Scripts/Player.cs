@@ -218,6 +218,10 @@ public class Player : MonoBehaviour
 	{
 		Health -= i;
 		Debug.Log("Player " + Name + " Takes " + i + " damage!");
+		if(Health < 0)
+		{
+			Health = 0;
+		}
 	}
 
 	public override string ToString()
