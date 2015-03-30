@@ -12,8 +12,6 @@ public class BattleLogger : MonoBehaviour
 
 	public void Log(string message)
 	{
-		Debug.Log("BattleLog: " + message);
-
 		if (this.enabled)
 		{
 			var txt = Instantiate(textPrototype) as GameObject;
@@ -22,9 +20,31 @@ public class BattleLogger : MonoBehaviour
 
 			txt.transform.SetParent(logWindow, false);
 		}
-		else
+	}
+
+	public void LogPlayerHealthChange(Player player, int oldHealth, int newHealth)
+	{
+		Debug.Log(player + " health " + oldHealth + " -> " + newHealth);
+		Log(player + " now has " + newHealth + "HP");
+	}
+
+	public void LogPlayerStateChange(Player player, PlayerState oldState, PlayerState newState)
+	{
+		Debug.Log(player + " state " + oldState + " -> " + newState);
+
+		if (newState == PlayerState.Chosen && oldState == PlayerState.Deciding)
 		{
-			Debug.Log("... but disabled.");
+			Log(player + " is ready.");
+		}
+	}
+
+	public void LogPlayerDrewCard(Player player, Card card)
+	{
+		string msg = player + " drew " + card;
+		Debug.Log(msg);
+		if (player.State != PlayerState.Setup)
+		{
+			Log(msg);
 		}
 	}
 }
