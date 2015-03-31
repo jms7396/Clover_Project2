@@ -2,22 +2,32 @@
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Linq;
+using System;
 
 public class Hand : MonoBehaviour
 {
 	/// <summary>
 	/// Keys listed in order to be associated with the hand of cards
 	/// </summary>
+	[ContextMenuItem("Player 1 presets", "setKeyListPresetPlayer1")]
+	[ContextMenuItem("Player 2 presets", "setKeyListPresetPlayer2")]
 	public KeyCode[] keyList = new KeyCode[HAND_SIZE];
 
-	public GameObject playerCardEventHandler;
+	public void setKeyListPresetPlayer1()
+	{
+		keyList = new KeyCode[HAND_SIZE] { KeyCode.Q, KeyCode.A, KeyCode.Z };
+	}
+	public void setKeyListPresetPlayer2()
+	{
+		keyList = new KeyCode[HAND_SIZE] { KeyCode.O, KeyCode.K, KeyCode.M };
+	}
+
 
 	public const int HAND_SIZE = 3;
 
-	public Player thisPlayer;
+	public Player Player;
 
 	public GameObject cardPrototype;
-
 
 	public int Count
 	{
@@ -63,7 +73,7 @@ public class Hand : MonoBehaviour
 			var uicard = cardGO.GetComponent<UICard>();
 
 			uicard.Card = card;
-			uicard.owner = thisPlayer;
+			uicard.owner = Player;
 
 			cardGO.transform.SetParent(this.transform, false);
 			cardGO.SetActive(true);
@@ -75,6 +85,9 @@ public class Hand : MonoBehaviour
 		return false;
 	}
 
+	/// <summary>
+	/// Make sure the keyboard buttons marked on each child card is accurate
+	/// </summary>
 	public void setupButtonText()
 	{
 		int i = 0;
@@ -101,10 +114,23 @@ public class Hand : MonoBehaviour
 
 	void Start()
 	{
-		thisPlayer = (thisPlayer) ? thisPlayer : GetComponent<Player>();
+		Player = (Player) ? Player : GetComponent<Player>();
 	}
 
-	// TODO: make each card listen for itself?
+	void PickCard(Card card)
+	{
+		Player.PickCard(card);
+	}
+
+	void PickCard(GameObject obj)
+	{
+		var card = obj.GetComponent<UICard>();
+
+		if (card == null) { throw new Exception("Not a valid card object"); }
+
+		PickCard(card);
+	}
+
 	void Update()
 	{
 		if (!Input.anyKeyDown) return;
@@ -115,14 +141,10 @@ public class Hand : MonoBehaviour
 
 			if (Input.GetKeyDown(key))
 			{
-				var card = this[i];
-				ExecuteEvents.ExecuteHierarchy<IPlayerCardEventHandler>(
-					playerCardEventHandler,
-					null,
-					(x, y) => x.CardChosen(card)
-				);
+				// TODO/FIXME: possible null ref exception?
+				PickCard(this[i]);
+				return;
 			}
 		}
 	}
-
 }

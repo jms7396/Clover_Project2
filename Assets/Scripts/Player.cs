@@ -1,25 +1,118 @@
 ﻿using UnityEngine;
-using UnityEngine.EventSystems;
+using UnityEngine.Events;
 using System.Collections;
+
+public enum PlayerState
+{
+	None,
+	Setup,
+	Deciding,
+	Chosen,
+	Dead
+}
+
+#region UnityEvents
+
+/// <summary>
+/// An event fired when the player's state changes.
+/// Parameters: player, old state, new state
+/// </summary>
+[System.Serializable]
+public class PlayerStateChangedEvent : UnityEvent<Player, PlayerState, PlayerState> { };
+
+/// <summary>
+/// An event fired when the player's health changes.
+/// Parameters: player, old health, new health
+/// </summary>
+[System.Serializable]
+public class HealthChangedEvent : UnityEvent<Player, int, int> { };
+
+/// <summary>
+/// An event fired when the player chooses a card.
+/// Parameters: player, old card choice, new card choice.
+/// Most listeners will probably only use the new or old value.
+/// Note that resetting a player's choice means the new value will be null!
+/// </summary>
+[System.Serializable]
+public class CardChosenEvent : UnityEvent<Player, Card, Card> { };
+
+/// <summary>
+/// An event fired when the player draws a card.
+/// </summary>
+[System.Serializable]
+public class CardDrawnEvent : UnityEvent<Player, Card> { };
+
+#endregion
 
 public class Player : MonoBehaviour
 {
-	public enum State
-	{
-		None,
-		Deciding,
-		Chosen,
-		Dead
-	}
-
-	public int Health;
-	public string Name;
-	public Card cardChoice = null;
+	#region Fields, Properties
 	public Deck deck;
 	public Hand hand;
-	public State state;
 
-	public GameObject playerCardEventHandler;
+	[SerializeField]
+	private string _name;
+	public string Name
+	{
+		get { return _name; }
+		set
+		{
+			gameObject.name = "Player \"" + value + '"';
+			_name = value;
+		}
+	}
+
+	[SerializeField]
+	private int health = 20;
+	[SerializeField]
+	[ContextMenuItem("Set to current health", "setMaxHealthToStarterHealth")]
+	public int MaxHealth = 20;
+	public int Health
+	{
+		get { return health; }
+		set
+		{
+			var old = health;
+			value = Mathf.Clamp(value, 0, MaxHealth);
+			health = value;
+			healthChange.Invoke(this, old, value);
+		}
+	}
+
+
+	private PlayerState state;
+	public PlayerState State
+	{
+		get { return state; }
+		set
+		{
+			var old = state;
+			state = value;
+			stateChange.Invoke(this, old, value);
+		}
+	}
+
+
+	private Card cardChoice = null;
+	public Card CardChoice
+	{
+		get { return cardChoice; }
+		set
+		{
+			var old = cardChoice;
+			cardChoice = value;
+			cardChange.Invoke(this, old, value);
+		}
+	}
+
+	#endregion
+
+	#region Event Listeners
+	public HealthChangedEvent healthChange;
+	public PlayerStateChangedEvent stateChange;
+	public CardChosenEvent cardChange;
+	public CardDrawnEvent cardDrawn;
+	#endregion
 
 	void Start() { }
 
@@ -29,7 +122,7 @@ public class Player : MonoBehaviour
 	{
 		get
 		{
-			return state == State.Deciding || state == State.Chosen;
+			return state == PlayerState.Deciding || state == PlayerState.Chosen;
 		}
 	}
 
@@ -37,17 +130,15 @@ public class Player : MonoBehaviour
 	{
 		get
 		{
-			return state == State.Chosen;
+			return state == PlayerState.Chosen;
 		}
 	}
 
-	public Card CardChoice
+	public bool IsDead
 	{
-		get { return cardChoice; }
-		set
+		get
 		{
-			cardChoice = value;
-			state = State.Chosen;
+			return state == PlayerState.Dead;
 		}
 	}
 
@@ -56,8 +147,30 @@ public class Player : MonoBehaviour
 	/// </summary>
 	public void ResetChoice()
 	{
-		state = State.Deciding;
+		var oldChoice = cardChoice;
+		var oldState = state;
 		cardChoice = null;
+		if (state != PlayerState.Dead)
+		{
+			state = PlayerState.Deciding;
+		}
+		cardChange.Invoke(this, oldChoice, cardChoice);
+		stateChange.Invoke(this, oldState, state);
+	}
+
+	/// <summary>
+	/// Pick a card, changing state accordingly.
+	/// </summary>
+	/// <param name="card"></param>
+	public void PickCard(Card card)
+	{
+		CardChoice = card;
+		State = PlayerState.Chosen;
+	}
+
+	public void PickCard(UICard card)
+	{
+		PickCard(card.card);
 	}
 
 	public void Discard(Card card)
@@ -69,7 +182,8 @@ public class Player : MonoBehaviour
 	{
 		for (int i = 0; i < Hand.HAND_SIZE; i++)
 		{
-			if (!draw()) {
+			if (!draw())
+			{
 				return false;
 			}
 		}
@@ -97,6 +211,8 @@ public class Player : MonoBehaviour
 			return false;
 		}
 
+		cardDrawn.Invoke(this, card);
+
 		var insertSuccess = hand.Insert(card);
 
 		if (!insertSuccess)
@@ -113,10 +229,29 @@ public class Player : MonoBehaviour
 	{
 		Health -= i;
 		Debug.Log("Player " + Name + " Takes " + i + " damage!");
+		if(Health <= 0)
+		{
+			Health = 0;
+			state = PlayerState.Dead;
+			//Debug.Log("Player Died!");
+		}
 	}
 
 	public override string ToString()
 	{
-		return "Player " + Name;
+		return (Name.Length != 0) ? "Player " + Name : "An Unnamed Player";
 	}
+
+	#region Editor Helper Methods
+
+	public void LogPlayerCardChosen(Player player, Card oldCard, Card newCard)
+	{
+		Debug.Log(player + " chose " + newCard);
+	}
+
+	public void setMaxHealthToStarterHealth()
+	{
+		MaxHealth = health;
+	}
+	#endregion
 }
