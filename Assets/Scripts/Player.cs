@@ -134,6 +134,14 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	public bool IsDead
+	{
+		get
+		{
+			return state == PlayerState.Dead;
+		}
+	}
+
 	/// <summary>
 	/// Reset the chosen card and associated player state
 	/// </summary>
@@ -142,7 +150,10 @@ public class Player : MonoBehaviour
 		var oldChoice = cardChoice;
 		var oldState = state;
 		cardChoice = null;
-		state = PlayerState.Deciding;
+		if (state != PlayerState.Dead)
+		{
+			state = PlayerState.Deciding;
+		}
 		cardChange.Invoke(this, oldChoice, cardChoice);
 		stateChange.Invoke(this, oldState, state);
 	}
@@ -218,6 +229,12 @@ public class Player : MonoBehaviour
 	{
 		Health -= i;
 		Debug.Log("Player " + Name + " Takes " + i + " damage!");
+		if(Health <= 0)
+		{
+			Health = 0;
+			state = PlayerState.Dead;
+			//Debug.Log("Player Died!");
+		}
 	}
 
 	public override string ToString()

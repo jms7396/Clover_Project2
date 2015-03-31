@@ -24,6 +24,8 @@ public class Controller2 : MonoBehaviour {
 
 	public Player p1;
 	public Player p2;
+	public GameObject GameOverPanel;
+	public GameObject GameOverText;
 
 	public BattleLogger log;
 
@@ -103,6 +105,20 @@ public class Controller2 : MonoBehaviour {
 			State = GameState.PlayersLocked;
 			EvaluateBattle();
 		}
+		if (p1.IsDead) 
+		{
+			Reset ();
+			Text ttext = GameOverText.GetComponent<Text>();
+			ttext.text = "Player 2 Wins!!";
+			GameOverPanel.SetActive(true);
+		}
+		if (p2.IsDead) 
+		{
+			Reset ();
+			Text ttext = GameOverText.GetComponent<Text>();
+			ttext.text = "Player 1 Wins!!";
+			GameOverPanel.SetActive(true);
+		}
 	}
 
 	public void EvaluateBattle()
@@ -122,6 +138,108 @@ public class Controller2 : MonoBehaviour {
 
 	public void CardChecks(Player p1, Player p2, Card p1Card, Card p2Card)
 	{
+
 		// Attack Checks
+		switch(p1Card.type)
+		{
+		case CardType.fire:
+			switch(p2Card.type)
+			{
+			case CardType.fire:
+				if(p1Card.atk > p2Card.atk)
+				{
+					p1Card.atk -= p2Card.atk;
+					p1Card.AffectPlayer(p2);
+					p1Card.atk += p2Card.atk;
+				}
+				else if (p1Card.atk < p2Card.atk)
+				{
+					p2Card.atk -= p1Card.atk;
+					p2Card.AffectPlayer(p1);
+					p2Card.atk += p1Card.atk;
+				}
+				else
+				{
+					log.Log("Nothing Happened!");
+				}
+				break;
+			case CardType.water:
+				p2Card.AffectPlayer(p1);
+				break;
+			case CardType.earth:
+				p1Card.AffectPlayer(p2);
+				break;
+			}
+			break;
+		case CardType.water:
+			switch(p2Card.type)
+			{
+			case CardType.fire:
+				p1Card.AffectPlayer(p2);
+				break;
+			case CardType.water:
+				if(p1Card.atk > p2Card.atk)
+				{
+					p1Card.atk -= p2Card.atk;
+					p1Card.AffectPlayer(p2);
+					p1Card.atk += p2Card.atk;
+				}
+				else if (p1Card.atk < p2Card.atk)
+				{
+					p2Card.atk -= p1Card.atk;
+					p2Card.AffectPlayer(p1);
+					p2Card.atk += p1Card.atk;
+				}
+				else
+				{
+					log.Log("Nothing Happened!");
+				}
+				break;
+			case CardType.earth:
+				p2Card.AffectPlayer(p1);
+				break;
+			}
+			break;
+		case CardType.earth:
+			switch(p2Card.type)
+			{
+			case CardType.fire:
+				p2Card.AffectPlayer(p1);
+				break;
+			case CardType.water:
+				p1Card.AffectPlayer(p2);
+				break;
+			case CardType.earth:
+				if(p1Card.atk > p2Card.atk)
+				{
+					p1Card.atk -= p2Card.atk;
+					p1Card.AffectPlayer(p2);
+					p1Card.atk += p2Card.atk;
+				}
+				else if (p1Card.atk < p2Card.atk)
+				{
+					p2Card.atk -= p1Card.atk;
+					p2Card.AffectPlayer(p1);
+					p2Card.atk += p1Card.atk;
+				}
+				else
+				{
+					log.Log("Nothing Happened!");
+				}
+				break;
+			}
+			break;
+		}
+	}
+
+	public void Reset()
+	{
+		p1.Health = 20;
+		p2.Health = 20;
+		p1.deck.Shuffle ();
+		p2.deck.Shuffle ();
+		//p1.State = PlayerState.None;
+		//p2.State = PlayerState.None;
+
 	}
 }
