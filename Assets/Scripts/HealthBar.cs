@@ -7,6 +7,7 @@ public class HealthBar : MonoBehaviour
 {
 	public Slider slider;
 	public Player player;
+    public Text text;
 
 	private bool warned = false;
 
@@ -14,7 +15,11 @@ public class HealthBar : MonoBehaviour
 
 	void OnEnable()
 	{
-		if (player) player.healthChange.AddListener(OnPlayerHealthChange);
+        if (player) player.healthChange.AddListener(OnPlayerHealthChange);
+        else Debug.LogWarning("No player attached to HealthBar!");
+
+        if (!slider) Debug.LogWarning("No slider attached to HealthBar!");
+        if (!text) Debug.LogWarning("No text attached to HealthBar!");
 	}
 
 	void OnDisable()
@@ -26,8 +31,13 @@ public class HealthBar : MonoBehaviour
 	{
 		if (player)
 		{
-			slider.maxValue = player.MaxHealth;
-			slider.value = player.Health;
+            if (slider)
+            {
+                slider.maxValue = player.MaxHealth;
+                slider.value = player.Health;
+            }
+
+            if (text) text.text = player.Health.ToString();
 		}
 	}
 
@@ -39,6 +49,7 @@ public class HealthBar : MonoBehaviour
 			warned = true;
 		}
 
-		slider.value = newHealth;
+		if (slider) slider.value = newHealth;
+        if (text) text.text = player.Health.ToString();
 	}
 }
