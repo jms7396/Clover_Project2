@@ -45,11 +45,12 @@ public class Controller2 : MonoBehaviour {
 
 	void Awake()
 	{
+		SetupGame();
 	}
 
 	void Start()
 	{
-		SetupGame();
+        StartGame();
 	}
 
 	void OnEnable()
@@ -67,11 +68,6 @@ public class Controller2 : MonoBehaviour {
 	}
 
 	void Update() { }
-
-	public void SetupAndStartGame()
-	{
-		StartGame();
-	}
 
 	public void SetupGame()
 	{
