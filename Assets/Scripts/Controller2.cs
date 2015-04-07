@@ -28,6 +28,10 @@ public class Controller2 : MonoBehaviour {
 	public GameObject GameOverText;
 
 	public BattleLogger log;
+    public GameObject image;
+    public GameObject image2;
+    public GameObject damage;
+    public GameObject damage2;
 
 	private GameState state;
 	public GameState State
@@ -76,6 +80,14 @@ public class Controller2 : MonoBehaviour {
 		p1.State = PlayerState.Setup;
 		p2.State = PlayerState.Setup;
 		State = GameState.Setup;
+        image = GameObject.Find("Player1Atk");
+        image2 = GameObject.Find("Player2Atk");
+        damage = GameObject.Find("Damages1");
+        damage2= GameObject.Find("Damages2");
+        image.SetActive(false);
+        image2.SetActive(false);
+        //damage.SetActive(false);
+        //damage2.SetActive(false);
 	}
 
 	public void StartGame()
@@ -107,6 +119,10 @@ public class Controller2 : MonoBehaviour {
 			Text ttext = GameOverText.GetComponent<Text>();
 			ttext.text = "Player 2 Wins!!";
 			GameOverPanel.SetActive(true);
+            image.SetActive(false);
+            image2.SetActive(false);
+            damage.SetActive(false);
+            damage2.SetActive(false);
 		}
 		if (p2.IsDead) 
 		{
@@ -114,6 +130,10 @@ public class Controller2 : MonoBehaviour {
 			Text ttext = GameOverText.GetComponent<Text>();
 			ttext.text = "Player 1 Wins!!";
 			GameOverPanel.SetActive(true);
+            image.SetActive(false);
+            image2.SetActive(false);
+            damage.SetActive(false);
+            damage2.SetActive(false);
 		}
 	}
 
@@ -121,15 +141,14 @@ public class Controller2 : MonoBehaviour {
 	{
 		CardChecks(p1, p2, p1.CardChoice, p2.CardChoice);
 		state = GameState.PlayersChoosing;
-
 		p1.Discard(p1.CardChoice);
 		p2.Discard(p2.CardChoice);
-
 		p1.ResetChoice();
 		p2.ResetChoice();
 
 		p1.draw();
 		p2.draw();
+
 	}
 
 	public void CardChecks(Player p1, Player p2, Card p1Card, Card p2Card)
@@ -144,12 +163,14 @@ public class Controller2 : MonoBehaviour {
 			case CardType.fire:
 				if(p1Card.atk > p2Card.atk)
 				{
+                    StartCoroutine(AnimatePlay1());
 					p1Card.atk -= p2Card.atk;
 					p1Card.AffectPlayer(p2);
 					p1Card.atk += p2Card.atk;
 				}
 				else if (p1Card.atk < p2Card.atk)
 				{
+                    StartCoroutine(AnimatePlay2());
 					p2Card.atk -= p1Card.atk;
 					p2Card.AffectPlayer(p1);
 					p2Card.atk += p1Card.atk;
@@ -160,9 +181,11 @@ public class Controller2 : MonoBehaviour {
 				}
 				break;
 			case CardType.water:
+                StartCoroutine(AnimatePlay2());
 				p2Card.AffectPlayer(p1);
 				break;
 			case CardType.earth:
+                StartCoroutine(AnimatePlay1());
 				p1Card.AffectPlayer(p2);
 				break;
 			}
@@ -171,17 +194,20 @@ public class Controller2 : MonoBehaviour {
 			switch(p2Card.type)
 			{
 			case CardType.fire:
+                StartCoroutine(AnimatePlay1());
 				p1Card.AffectPlayer(p2);
 				break;
 			case CardType.water:
 				if(p1Card.atk > p2Card.atk)
 				{
+                    StartCoroutine(AnimatePlay1());
 					p1Card.atk -= p2Card.atk;
 					p1Card.AffectPlayer(p2);
 					p1Card.atk += p2Card.atk;
 				}
 				else if (p1Card.atk < p2Card.atk)
 				{
+                    StartCoroutine(AnimatePlay2());
 					p2Card.atk -= p1Card.atk;
 					p2Card.AffectPlayer(p1);
 					p2Card.atk += p1Card.atk;
@@ -192,6 +218,7 @@ public class Controller2 : MonoBehaviour {
 				}
 				break;
 			case CardType.earth:
+                StartCoroutine(AnimatePlay2());
 				p2Card.AffectPlayer(p1);
 				break;
 			}
@@ -200,20 +227,24 @@ public class Controller2 : MonoBehaviour {
 			switch(p2Card.type)
 			{
 			case CardType.fire:
+                StartCoroutine(AnimatePlay2());
 				p2Card.AffectPlayer(p1);
 				break;
 			case CardType.water:
+                StartCoroutine(AnimatePlay1());
 				p1Card.AffectPlayer(p2);
 				break;
 			case CardType.earth:
 				if(p1Card.atk > p2Card.atk)
 				{
+                    StartCoroutine(AnimatePlay1());
 					p1Card.atk -= p2Card.atk;
 					p1Card.AffectPlayer(p2);
 					p1Card.atk += p2Card.atk;
 				}
 				else if (p1Card.atk < p2Card.atk)
 				{
+                    StartCoroutine(AnimatePlay2());
 					p2Card.atk -= p1Card.atk;
 					p2Card.AffectPlayer(p1);
 					p2Card.atk += p1Card.atk;
@@ -238,4 +269,26 @@ public class Controller2 : MonoBehaviour {
 		//p2.State = PlayerState.None;
 
 	}
+
+    IEnumerator AnimatePlay1()
+    {
+        //damage2.SetActive(true);
+        image.SetActive(true);
+        image.animation.Play();
+        //damage2.animation.Play();
+        yield return new WaitForSeconds(1.5f);
+        image.SetActive(false);
+        //damage2.SetActive(false);
+    }
+
+    IEnumerator AnimatePlay2()
+    {
+        //damage.SetActive(true);
+        image2.SetActive(true);
+        image2.animation.Play();
+        //damage.animation.Play();
+        yield return new WaitForSeconds(1.5f);
+        image2.SetActive(false);
+        //damage.SetActive(false);
+    }
 }
