@@ -73,7 +73,6 @@ NavMeshSettings:
     minRegionArea: 2
     widthInaccuracy: 16.666666
     heightInaccuracy: 10
-    tileSizeHint: 0
   m_NavMesh: {fileID: 0}
 --- !u!1001 &127181549
 Prefab:
@@ -972,7 +971,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22461244, guid: d7c169546c5f62549a06328a80390d9a, type: 2}
       propertyPath: m_SizeDelta.y
-      value: -367.323975
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22461244, guid: d7c169546c5f62549a06328a80390d9a, type: 2}
       propertyPath: m_AnchorMin.x
@@ -1575,8 +1574,8 @@ MonoBehaviour:
   m_Script: {fileID: 1301386320, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
-  m_BlockingObjects: 0
+  ignoreReversedGraphics: 1
+  blockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -2067,7 +2066,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300000, guid: 1ac47971a1cac3b48b370ec05dac6b74, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c414b80b087d71e468c7b53a799fbd87, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2198,7 +2197,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 22461244, guid: d7c169546c5f62549a06328a80390d9a, type: 2}
       propertyPath: m_SizeDelta.y
-      value: -367.323975
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22461244, guid: d7c169546c5f62549a06328a80390d9a, type: 2}
       propertyPath: m_AnchorMin.x
@@ -2312,7 +2311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Sprite: {fileID: 21300000, guid: 3bf41f697d02b1146b626ae91280319f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b78cdcc9444f4744ca9697fbf4698b88, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4237,6 +4236,7 @@ GameObject:
   - 224: {fileID: 1432237697}
   - 114: {fileID: 1432237699}
   - 114: {fileID: 1432237698}
+  - 222: {fileID: 1432237701}
   m_Layer: 5
   m_Name: P1 Left Card Prototype
   m_TagString: Untagged
@@ -4295,6 +4295,12 @@ MonoBehaviour:
   m_PreferredHeight: -1
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
+--- !u!222 &1432237701
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1432237696}
 --- !u!1 &1432481028
 GameObject:
   m_ObjectHideFlags: 0
@@ -4859,7 +4865,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: -1.43051147e-05}
+  m_AnchoredPosition: {x: 0, y: 7.62939453e-06}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: .5, y: 0}
 --- !u!222 &1651940280
@@ -6041,7 +6047,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2109661806}
   m_HandleRect: {fileID: 2109661805}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:

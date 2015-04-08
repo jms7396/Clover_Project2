@@ -16,6 +16,7 @@ public class UICard : MonoBehaviour {
 	public Text text;
 
 	public Text buttonText;
+	
 
 	void Start () {}
 	
